@@ -62,7 +62,10 @@ def generate_level(level):
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
-        super().__init__(tiles_group, all_sprites)
+        if tile_type == 'wall':
+            super().__init__(walls, all_sprites, tiles_group)
+        else:
+            super().__init__(tiles_group, all_sprites)
         self.image = tile_images[tile_type]
         self.rect = self.image.get_rect().move(
             tile_width * pos_x, tile_height * pos_y)
@@ -142,6 +145,7 @@ player = None
 # группы спрайтов
 player_group = pygame.sprite.Group()
 fon_group = pygame.sprite.Group()
+walls = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 tiles_group = pygame.sprite.Group()
 player, level_x, level_y = generate_level(load_level(level))
@@ -159,21 +163,41 @@ while running:
                 tiles_group.update()
                 camera.dx = 0
                 camera.dy = 0
+                if pygame.sprite.spritecollideany(player, walls):
+                    player.update(4)
+                    tiles_group.update()
+                    camera.dx = 0
+                    camera.dy = 0
             elif event.key == pygame.K_s:
                 player.update(4)
                 tiles_group.update()
                 camera.dx = 0
                 camera.dy = 0
+                if pygame.sprite.spritecollideany(player, walls):
+                    player.update(3)
+                    tiles_group.update()
+                    camera.dx = 0
+                    camera.dy = 0
             elif event.key == pygame.K_a:
                 player.update(1)
                 tiles_group.update()
                 camera.dx = 0
                 camera.dy = 0
+                if pygame.sprite.spritecollideany(player, walls):
+                    player.update(2)
+                    tiles_group.update()
+                    camera.dx = 0
+                    camera.dy = 0
             elif event.key == pygame.K_d:
                 player.update(2)
                 tiles_group.update()
                 camera.dx = 0
                 camera.dy = 0
+                if pygame.sprite.spritecollideany(player, walls):
+                    player.update(1)
+                    tiles_group.update()
+                    camera.dx = 0
+                    camera.dy = 0
 
     screen.fill(pygame.Color('lightblue'))
     # # изменяем ракурс камеры
@@ -183,6 +207,7 @@ while running:
     #     camera.apply(sprite)
     all_sprites.draw(screen)
     tiles_group.draw(screen)
+    walls.draw(screen)
     player_group.draw(screen)
     clock.tick(FPS)
     pygame.display.flip()
